@@ -1,0 +1,13 @@
+<div>
+  <h4><b><u>Dates for Headings</u></b></h4>
+  <p>{{ c.data.hdr_date }}</p>
+	<p>{{ c.data.prev_date }}</p>
+  <p>{{ c.data.curr_date }} is {{ c.data.prev_weekday }}</p>
+  <p>{{ c.data.next_date }}</p>
+  
+  <h4><b><u>Dates for Glide Queries</u></b></h4>
+  <p>{{ c.data.prev_date_rng1 }} to {{ c.data.prev_date_rng2 }}</p>
+  <p>{{ c.data.curr_date_snow }}</p>
+  <p>{{ c.data.next_date_snow }}</p>
+  
+</div>
