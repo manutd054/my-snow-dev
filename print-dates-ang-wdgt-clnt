@@ -1,0 +1,78 @@
+function() {
+  /* widget controller */
+  var c = this;
+	
+	var curr_day = new Date();
+	var prev_day = new Date();
+	var next_day = new Date();
+	var weekday = curr_day.getDay();
+	var year = curr_day.getFullYear();
+	
+	c.data.hdr_date = curr_day.toShortFormat() + ", " + year;
+	c.data.curr_date = curr_day.toShortFormat();
+	c.data.curr_date_snow = curr_day.toSNowFormat();
+	
+	c.data.prev_weekday = weekday;
+	switch (weekday) {
+		case 0:
+			n = 1;
+			break;
+		case 6: 
+			n = 1;
+			break;
+		default:
+			c.data.prev_date = prev_day.addDays(-1).toShortFormat();
+			c.data.prev_date_rng1 = prev_day.addDays(-1).toSNowFormat();
+			c.data.prev_date_rng2 = prev_day.toSNowFormat();
+			
+			c.data.next_date = next_day.addDays(1).toShortFormat();
+			c.data.next_date_rng1 = next_day.toSNowFormat();
+			c.data.next_date_rng2 = next_day.addDays(1).toSNowFormat();
+	}
+	
+}
+
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+Date.prototype.toSNowFormat = function() {   
+  function pad(s) { return (s < 10) ? '0' + s : s; }
+  var d = new Date(this.valueOf());
+  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+}
+
+Date.prototype.toShortFormat = function() {
+
+    var month_names =["Jan","Feb","Mar",
+                      "Apr","May","Jun",
+                      "Jul","Aug","Sep",
+                      "Oct","Nov","Dec"];
+	
+		var day_names =["Sunday", "Monday","Tuesday","Wednesday",
+                    "Thursday","Friday","Saturday"];
+    
+    var day = ordinal_suffix_of(this.getDate());
+	  var wkday = this.getDay();
+    var month_index = this.getMonth();
+    
+    return  day_names[wkday] + ", " + month_names[month_index] + " " + day
+}
+
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
