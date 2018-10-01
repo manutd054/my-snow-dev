@@ -1,0 +1,350 @@
+HTML
+------
+<div>
+  <h3>
+  	Availability Command Center and Change and Release Swivel Report
+  	<small class="text-muted">{{ c.data.hdr_date }}</small>    
+	</h3>
+  <P>
+    Points of contact for additional information: Test Name 1 (xxx xxx-xxxx) and Test Name 2 (xxx xxx-xxxx)
+  </P>
+</div>
+
+<div>
+  <h4>
+    <u>{{ c.data.curr_date }}</u>
+  </h4>
+  <h5>
+    <b><i>Highlights</i></b>
+  </h5>
+  <ul>
+    <li>Normal traffic volumes for .com, Mobile, Voice Line and MSR channels expected</li>
+    <li>All systems are running at full operational health</li>
+    <li>HVD Monitoring Call in ACC9 at 0330 AM.</li>
+  </ul>
+</div>
+
+<div>
+  <h4>
+    <u>Prior 24 Hours – {{ c.data.prev_date }}</u>
+  </h4>
+  <h5>
+    <b><i>Summary of Major Incidents</i></b>
+  </h5>
+  <table>
+    <ul ng-repeat="tot_cnt in data.prior_chg_count">
+      <li>{{tot_cnt.riskNm}} -- {{tot_cnt.riskCnt}} scheduled</li>
+    </ul>
+  </table>
+</div>
+
+
+<div>
+  <h5>
+    <b><i>Details of Major Incidents</i></b>
+  </h5>
+  <table class="table table-hover table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Number</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+    	<th>Type</th>
+    	<th>Risk</th>
+    	<th>Priority</th>
+      <th>Title</th>
+      <th>State</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="chg in data.prior_chgs">
+    	<td>{{chg.number}}</td>
+      <td>{{chg.start_date}}</td>
+      <td>{{chg.end_date}}</td>
+      <td>{{chg.type}}</td>
+      <td>{{chg.risk}}</td>
+      <td>{{chg.impact}}</td>
+      <td>{{chg.category}}</td>
+      <td>{{chg.short_description}}</td>
+      <td>{{chg.state}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <h5>
+    <b><i>Summary of Changes</i></b>
+  </h5>
+  <table>
+    <ul ng-repeat="tot_cnt in data.prior_chg_count">
+      <li>{{tot_cnt.riskNm}} -- {{tot_cnt.riskCnt}} scheduled</li>
+    </ul>
+  </table>
+</div>
+
+<div>
+  <h5>
+    <b><i>Details for Prior 24 Hours</i></b>
+  </h5>
+  <table class="table table-hover table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Number</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+    	<th>Type</th>
+    	<th>Risk</th>
+    	<th>Priority</th>
+      <th>Title</th>
+      <th>State</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="chg in data.prior_chgs">
+    	<td>{{chg.number}}</td>
+      <td>{{chg.start_date}}</td>
+      <td>{{chg.end_date}}</td>
+      <td>{{chg.type}}</td>
+      <td>{{chg.risk}}</td>
+      <td>{{chg.impact}}</td>
+      <td>{{chg.category}}</td>
+      <td>{{chg.short_description}}</td>
+      <td>{{chg.state}}</td>
+    </tr>
+    </tbody>
+  </table>
+  
+</div>
+-----------------------------------------------------------------------------------
+
+CLIENT SIDE SCRIPT
+------------------
+function() {
+  /* widget controller */
+  var c = this;
+	
+	var curr_day = new Date("04-01-2018");
+	var prev_day = new Date("04-01-2018");
+	var next_day = new Date("04-01-2018");
+	var weekday = curr_day.getDay();
+	var year = curr_day.getFullYear();
+	
+	c.data.hdr_date = curr_day.toShortFormat() + ", " + year;
+	c.data.curr_date = curr_day.toShortFormat();
+	c.data.curr_date_snow = curr_day.toSNowFormat();
+	
+	c.data.prev_weekday = weekday;
+	switch (weekday) {
+		case 0:
+			// SUNDAY
+			pd = -2;
+			nd = 1;
+			break;
+		case 5:
+			// FRIDAY
+			pd = -1;
+			nd = 3;
+			break;
+		case 6:
+			// SATURDAY
+			pd = -1;
+			nd = 2;
+			break;
+		case 1: 
+			// MONDAY
+			pd = -3;
+			nd = 1;
+			break;
+		default:
+			pd = -1;
+			nd = 1;
+	}
+	
+	c.data.prev_date = prev_day.addDays(pd).toShortFormat();
+	c.data.prev_date_rng1 = prev_day.addDays(nd).toSNowFormat();
+	c.data.prev_date_rng2 = prev_day.toSNowFormat();
+			
+	c.data.next_date = next_day.addDays(pd).toShortFormat();
+	c.data.next_date_rng1 = next_day.toSNowFormat();
+	c.data.next_date_rng2 = next_day.addDays(nd).toSNowFormat();
+	
+}
+
+Date.prototype.addDays = function(days) {
+	// FUNCTION TO ADD / SUBTRACT DAYS
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+Date.prototype.toSNowFormat = function() {   
+	// FUNCTION TO CHANGE DATE TO MM/DD/YYYY FORMAT
+  function pad(s) { return (s < 10) ? '0' + s : s; }
+  var d = new Date(this.valueOf());
+  return [pad(d.getMonth()+1), pad(d.getDate()), d.getFullYear()].join('/');
+}
+
+Date.prototype.toShortFormat = function() {
+	// FUNCTION TO FIND MONTH, DAY FOR THE GIVEN DATE
+    var month_names =["Jan","Feb","Mar",
+                      "Apr","May","Jun",
+                      "Jul","Aug","Sep",
+                      "Oct","Nov","Dec"];
+	
+		var day_names =["Sunday", "Monday","Tuesday","Wednesday",
+                    "Thursday","Friday","Saturday"];
+    
+    var day = ordinal_suffix_of(this.getDate());
+	  var wkday = this.getDay();
+    var month_index = this.getMonth();
+    
+    return  day_names[wkday] + ", " + month_names[month_index] + " " + day
+}
+
+function ordinal_suffix_of(i) {
+	// FUNCTION TO ADD ORDINAL VALUES - ST, ND, RD, TH
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+----------------------------------------------------------------------------------
+
+SERVER SIDE SCRIPT
+------------------
+
+(function() {
+	data.prior_incs = [];
+	data.prior_inc_count = [];
+	
+	data.prior_chgs = [];
+	data.prior_chg_count = [];
+	
+	data.nxt_chgs = [];
+	data.nxt_chg_count = [];
+	
+	prev_chg_rng1 = data.prev_date_rng1;
+	prev_chg_rng2 = data.prev_date_rng2;
+	gs.info("First Date is " + input.prev_date_rng1);
+	gs.info("Second Date is " + input.prev_date_rng2);
+	//data.prior_chgs.push(prior_chg);
+	
+	// **** FETCH INCIDENT DETAILS ******
+	var pincCntGa = new GlideAggregate('incident');
+		pincCntGa.addQuery("start_date", ">=", "2018-04-01");
+		pincCntGa.addQuery("start_date", "<", "2018-04-15");
+		pincCntGa.addAggregate('COUNT', 'priority');
+		pincCntGa.query(); 
+	
+	var pincGr = new GlideRecord('incident');
+		pincGr.addActiveQuery();
+		pincGr.addQuery("start_date", ">=", "2018-04-01");
+		pincGr.addQuery("start_date", "<", "2018-04-15");
+		pincGr.orderBy("start_date"); 
+		pincGr.query();
+	
+	// **** FETCH PRIOR CHANGE DETAILS ******
+	var pcountGa = new GlideAggregate('change_request');
+		pcountGa.addQuery("start_date", ">=", prev_chg_rng1);
+		pcountGa.addQuery("start_date", "<", prev_chg_rng2);
+		pcountGa.addAggregate('COUNT', 'risk');
+		pcountGa.query(); 
+	
+	var pchgGr = new GlideRecord('change_request');
+		pchgGr.addActiveQuery();
+		pchgGr.addQuery("start_date", ">=", "2018-04-01");
+		pchgGr.addQuery("start_date", "<", "2018-04-15");
+		pchgGr.orderBy("start_date"); 
+		pchgGr.query();
+	
+	// **** FETCH FUTURE CHANGE DETAILS ******
+	var ncountGa = new GlideAggregate('change_request');
+		ncountGa.addQuery("start_date", ">=", "2018-04-15");
+		ncountGa.addQuery("start_date", "<", "2018-05-01");
+		ncountGa.addAggregate('COUNT', 'risk');
+		ncountGa.query(); 
+	
+	var nchgGr = new GlideRecord('change_request');
+		nchgGr.addActiveQuery();
+		nchgGr.addQuery("start_date", ">=", "2018-04-15");
+		nchgGr.addQuery("start_date", "<", "2018-05-01");
+		nchgGr.orderBy("start_date"); 
+		nchgGr.query();
+	
+	// **** PRINT INCIDENT DETAILS ******
+	while(pincCntGa.next()){
+		var priorInc_count = {};
+		priorInc_count.riskNm = pincCntGa.risk.getDisplayValue();
+		priorInc_count.riskCnt = pincCntGa.getAggregate('COUNT', 'risk');
+		data.prior_inc_count.push(priorInc_count);
+	}
+	
+	while(pincGr.next()){
+		var prior_inc = {};
+		prior_inc.number = pincGr.getDisplayValue('number');
+		prior_inc.start_date = pincGr.getDisplayValue('start_date');
+		prior_inc.end_date = pincGr.getDisplayValue('end_date');
+		prior_inc.type = pincGr.getDisplayValue('type');
+		prior_inc.risk = pincGr.getDisplayValue('risk');
+		prior_inc.impact = pincGr.getDisplayValue('impact');
+		prior_inc.category = pincGr.getDisplayValue('category');
+		prior_inc.short_description = pincGr.getDisplayValue('short_description');
+		prior_inc.state = pincGr.getDisplayValue('state');
+		data.prior_incs.push(prior_inc);
+	}
+	
+	// **** PRINT PRIOR CHANGE DETAILS ******
+	while(pcountGa.next()){
+		var priorChg_count = {};
+		priorChg_count.riskNm = pcountGa.risk.getDisplayValue();
+		priorChg_count.riskCnt = pcountGa.getAggregate('COUNT', 'risk');
+		data.prior_chg_count.push(priorChg_count);
+	}
+	
+	while(pchgGr.next()){
+		var prior_chg = {};
+		prior_chg.number = pchgGr.getDisplayValue('number');
+		prior_chg.start_date = pchgGr.getDisplayValue('start_date');
+		prior_chg.end_date = pchgGr.getDisplayValue('end_date');
+		prior_chg.type = pchgGr.getDisplayValue('type');
+		prior_chg.risk = pchgGr.getDisplayValue('risk');
+		prior_chg.impact = pchgGr.getDisplayValue('impact');
+		prior_chg.category = pchgGr.getDisplayValue('category');
+		prior_chg.short_description = pchgGr.getDisplayValue('short_description');
+		prior_chg.state = pchgGr.getDisplayValue('state');
+		data.prior_chgs.push(prior_chg);
+	}
+	
+	// **** PRINT PRIOR CHANGE DETAILS ******
+	while(ncountGa.next()){
+		var nxtChg_count = {};
+		nxtChg_count.riskNm = pcountGa.risk.getDisplayValue();
+		nxtChg_count.riskCnt = pcountGa.getAggregate('COUNT', 'risk');
+		data.nxt_chg_count.push(nxtChg_count);
+	}
+	
+	while(nchgGr.next()){
+		var nxt_chg = {};
+		nxt_chg.number = pchgGr.getDisplayValue('number');
+		nxt_chg.start_date = pchgGr.getDisplayValue('start_date');
+		nxt_chg.end_date = pchgGr.getDisplayValue('end_date');
+		nxt_chg.type = pchgGr.getDisplayValue('type');
+		nxt_chg.risk = pchgGr.getDisplayValue('risk');
+		nxt_chg.impact = pchgGr.getDisplayValue('impact');
+		nxt_chg.category = pchgGr.getDisplayValue('category');
+		nxt_chg.short_description = pchgGr.getDisplayValue('short_description');
+		nxt_chg.state = pchgGr.getDisplayValue('state');
+		data.nxt_chgs.push(nxt_chg);
+	}
+	
+})();
